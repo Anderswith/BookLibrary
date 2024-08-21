@@ -1,0 +1,23 @@
+[
+  {
+    "title": "harry potter",
+    "author": "jk rowling",
+    "year": 1994,
+    "ISBN": 346743,
+    "inStock": "Book is in available"
+  },
+  {
+    "title": "lord of the rings",
+    "author": "who knows",
+    "year": 1008,
+    "ISBN": 325547,
+    "inStock": "Book is in available"
+  },
+  {
+    "title": "ello",
+    "author": "hermann",
+    "year": 2022,
+    "ISBN": 766455,
+    "inStock": "Book is in available"
+  }
+]
