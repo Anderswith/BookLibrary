@@ -1,6 +1,6 @@
 [
   {
-    "title": "harry potter",
+    "title": "Hairy potter",
     "author": "jk rowling",
     "year": 1994,
     "ISBN": 346743,
@@ -14,10 +14,17 @@
     "inStock": "Book is in available"
   },
   {
-    "title": "ello",
-    "author": "hermann",
+    "title": "he",
+    "author": "helmut",
     "year": 2022,
     "ISBN": 766455,
     "inStock": "Book is in available"
+  },
+  {
+    "title": "hellokitty2k",
+    "author": "me",
+    "year": 230,
+    "ISBN": 2350,
+    "inStock": "Book has been loaned out"
   }
 ]

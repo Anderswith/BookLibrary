@@ -70,8 +70,6 @@ class Program
         List<Book> books = JsonRead.ReadBooksFromFile();
         books.Add(book);
         JsonWrite.WriteBooksToFile(books);
-        
-        //JsonWrite.WriteBookToFile(new List<Book> { book });
         Console.WriteLine("Book has been added to the library");
     }
 
@@ -82,19 +80,13 @@ class Program
         string bookToDelete = Console.ReadLine();
         try
         {
-            // Read existing books from the file
             List<Book> books = JsonRead.ReadBooksFromFile();
-
-            // Find and remove the book with the specified title
             Book bookToRemove = books.FirstOrDefault(b => b.title.Equals(bookToDelete, StringComparison.OrdinalIgnoreCase));
 
             if (bookToRemove != null)
             {
                 books.Remove(bookToRemove);
-
-                // Write the updated list back to the file
                 JsonWrite.WriteBooksToFile(books);
-
                 Console.WriteLine($"Book with title '{bookToDelete}' has been removed from the library.");
             }
             else
@@ -126,57 +118,72 @@ class Program
         string book = Console.ReadLine();
         List<Book> books = JsonRead.ReadBooksFromFile();
         Book toEdit = books.FirstOrDefault(b => b.title.Equals(book, StringComparison.OrdinalIgnoreCase));
-        Console.WriteLine("enter the attribute you want to update:");
         
         
-
-        string pickedBookToEdit = Console.ReadLine();
-        /*foreach(Book book in books)
+        
+        if(toEdit != null)
         {
-            if(book.title == someValue)
+            Console.WriteLine("Choose one of the following options to edit: title, author, year, or ISBN:");
+            string pickedBookToEdit = Console.ReadLine();
+            
+            
+            if (pickedBookToEdit.Contains("title", StringComparison.OrdinalIgnoreCase))
             {
-                book.title = newValue;
-                break;
+                Console.WriteLine("Enter new title for the book:");
+                toEdit.title = Console.ReadLine();
             }
-        }*/
-        if (pickedBookToEdit.Contains("title"))
-        {
-            Console.WriteLine("Enter new title for the book:");
-            toEdit.title = Console.ReadLine();
-            //CreateBook(toEdit);
-        }
 
-        if (pickedBookToEdit.Contains("author"))
-        {
-         Console.WriteLine("Enter new author for the book:");
-         toEdit.author = Console.ReadLine();
-         CreateBook(toEdit);
-        }
+            if (pickedBookToEdit.Contains("author", StringComparison.OrdinalIgnoreCase))
+            {
+             Console.WriteLine("Enter new author for the book:");
+             toEdit.author = Console.ReadLine();
+            }
 
-        if (pickedBookToEdit.Contains("year"))
-        {
-            Console.WriteLine("Enter new publishing year for the book:");
-            toEdit.year = Convert.ToInt32(Console.ReadLine());
-            CreateBook(toEdit);
-        }
+            if (pickedBookToEdit.Contains("year", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Enter new publishing year for the book:");
+                toEdit.year = Convert.ToInt32(Console.ReadLine());
+            }
 
-        if (pickedBookToEdit.Contains("isbn"))
+            if (pickedBookToEdit.Contains("isbn", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Enter new ISBN for the book:");
+                toEdit.ISBN = Convert.ToDouble(Console.ReadLine());
+            }
+            JsonWrite.WriteBooksToFile(books);
+            Console.WriteLine("Book has been updated");
+        }
+        else
         {
-            Console.WriteLine("Enter new ISBN for the book:");
-            toEdit.ISBN = Convert.ToDouble(Console.ReadLine());
-            CreateBook(toEdit);
+            Console.WriteLine("Book not found");
         }
     }
     public static void LoanBook()
     {
+        
         Console.WriteLine("Enter the name of the book you want to loan:");
         ShowBooks();
-        string toLoan = Console.ReadLine();
         List<Book> books = JsonRead.ReadBooksFromFile();
+        string toLoan = Console.ReadLine().ToLower();
         Book loanBook = books.FirstOrDefault(b => b.title.Equals(toLoan, StringComparison.OrdinalIgnoreCase));
         
-        loanBook.inStock = "Book has been loaned out";
-        CreateBook(loanBook);
+        if (loanBook != null)
+        {
+            if (loanBook.inStock == "Book is available")  
+            {
+                loanBook.inStock = "Book has been loaned out";  
+                JsonWrite.WriteBooksToFile(books);  
+                Console.WriteLine($"'{loanBook.title}' has been loaned out.");
+            }
+            else if (loanBook.inStock == "Book has been loaned out")  
+            {
+                Console.WriteLine("Book is already loaned out.");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"No book found with the title '{toLoan}'.");
+        }
 
     }
    

@@ -5,7 +5,7 @@ namespace BookLibrary.Util;
 
 public class JsonRead
 {
-    private static string filePath = @"C:\Users\ko2an\Desktop\Library.json";
+    private static string filePath = @"C:\Users\Anders\Documents\GitHub\BookLibrary\Library.json";
     
     public static List<Book> ReadBooksFromFile()
     {
