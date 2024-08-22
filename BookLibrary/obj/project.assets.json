@@ -8,26 +8,24 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Anders\\.nuget\\packages\\": {}
+    "C:\\Users\\ko2an\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Anders\\Documents\\GitHub\\BookLibrary\\BookLibrary\\BookLibrary.csproj",
+      "projectUniqueName": "C:\\Users\\ko2an\\RiderProjects\\BookLibrary\\BookLibrary\\BookLibrary.csproj",
       "projectName": "BookLibrary",
-      "projectPath": "C:\\Users\\Anders\\Documents\\GitHub\\BookLibrary\\BookLibrary\\BookLibrary.csproj",
-      "packagesPath": "C:\\Users\\Anders\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Anders\\Documents\\GitHub\\BookLibrary\\BookLibrary\\obj\\",
+      "projectPath": "C:\\Users\\ko2an\\RiderProjects\\BookLibrary\\BookLibrary\\BookLibrary.csproj",
+      "packagesPath": "C:\\Users\\ko2an\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ko2an\\RiderProjects\\BookLibrary\\BookLibrary\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Anders\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\ko2an\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

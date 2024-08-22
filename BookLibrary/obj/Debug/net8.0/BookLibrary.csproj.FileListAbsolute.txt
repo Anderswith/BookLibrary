@@ -27,3 +27,4 @@ C:\Users\Anders\Documents\GitHub\BookLibrary\BookLibrary\obj\Debug\net8.0\refint
 C:\Users\Anders\Documents\GitHub\BookLibrary\BookLibrary\obj\Debug\net8.0\BookLibrary.pdb
 C:\Users\Anders\Documents\GitHub\BookLibrary\BookLibrary\obj\Debug\net8.0\BookLibrary.genruntimeconfig.cache
 C:\Users\Anders\Documents\GitHub\BookLibrary\BookLibrary\obj\Debug\net8.0\ref\BookLibrary.dll
+C:\Users\ko2an\RiderProjects\BookLibrary\BookLibrary\obj\Debug\net8.0\BookLibrary.sourcelink.json
