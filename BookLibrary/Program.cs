@@ -16,22 +16,19 @@ class Program
 
     private static void Start()
     {
-        
-        Book book = new Book();
-        List<Book> books = new List<Book>();
         Console.WriteLine("Hello, welcome to the Book Library! Please choose one of the following options:" +
                           "\n 1. Add book \n 2. Delete book \n 3. Update book \n 4. Loan book");
-        PickChoice(book, books);
+        PickChoice();
     }
 
 
-    private static void PickChoice(Book book, List<Book> books)
+    private static void PickChoice()
     {
         int choice = Convert.ToInt32(Console.ReadLine());
         switch (choice)
         {
             case 1:
-                AddBook(book);
+                AddBook();
                 Start();
                 break;
             case 2:
@@ -49,9 +46,9 @@ class Program
         }
     }
 
-    private static void AddBook(Book book)
+    private static void AddBook()
     {
-        
+        Book book = new Book();
         Console.WriteLine("Enter book title:");
         book.title = Console.ReadLine();
         Console.WriteLine("Enter book author:");

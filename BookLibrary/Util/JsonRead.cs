@@ -14,6 +14,7 @@ public class JsonRead
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);
+                // ?? returner er et argument med mindre den er null så returner den et andet.
                 List<Book> books = JsonSerializer.Deserialize<List<Book>>(json) ?? new List<Book>();
                 return books;
             }
