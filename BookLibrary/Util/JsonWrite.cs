@@ -5,7 +5,7 @@ namespace BookLibrary.Util;
 
 public class JsonWrite
 {
-    private static string filePath = @"C:\Users\Anders\Documents\GitHub\BookLibrary\Library.json";
+    private static string filePath = @"C:\Users\ko2an\Desktop\Library.json";
     public static void WriteBooksToFile(List<Book> books)
     {
         try

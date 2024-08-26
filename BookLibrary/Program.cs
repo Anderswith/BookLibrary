@@ -43,6 +43,9 @@ class Program
                 LoanBook();
                 Start();
                 break;
+            default: 
+                Console.WriteLine("Pick a number between 1 and 4");
+                break;
         }
     }
 
@@ -116,8 +119,6 @@ class Program
         List<Book> books = JsonRead.ReadBooksFromFile();
         Book toEdit = books.FirstOrDefault(b => b.title.Equals(book, StringComparison.OrdinalIgnoreCase));
         
-        
-        
         if(toEdit != null)
         {
             Console.WriteLine("Choose one of the following options to edit: title, author, year, or ISBN:");
@@ -157,7 +158,6 @@ class Program
     }
     public static void LoanBook()
     {
-        
         Console.WriteLine("Enter the name of the book you want to loan:");
         ShowBooks();
         List<Book> books = JsonRead.ReadBooksFromFile();

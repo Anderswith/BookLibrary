@@ -5,7 +5,7 @@ namespace BookLibrary.Util;
 
 public class JsonRead
 {
-    private static string filePath = @"C:\Users\Anders\Documents\GitHub\BookLibrary\Library.json";
+    private static string filePath = @"C:\Users\ko2an\Desktop\Library.json";
     
     public static List<Book> ReadBooksFromFile()
     {
@@ -14,8 +14,7 @@ public class JsonRead
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);
-                // ?? returner er et argument med mindre den er null så returner den et andet.
-                List<Book> books = JsonSerializer.Deserialize<List<Book>>(json) ?? new List<Book>();
+                List<Book> books = JsonSerializer.Deserialize<List<Book>>(json);
                 return books;
             }
             else
