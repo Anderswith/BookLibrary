@@ -11,5 +11,8 @@ public class Book
     [Key]
     public double ISBN { get; set; }
     public string inStock { get; set; }
+    
+    public Guid? UserID { get; set; } 
+    public User LoanedBy { get; set; }
 
 }

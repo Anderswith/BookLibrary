@@ -1,30 +1,26 @@
 using BookLibrary.BE;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookLibrary.DAL;
 
 public class UserRepository
 {
+    private LibraryContext context;
     public UserRepository()
-    {
-        var OptionsBuilder = new DbContextOptions<LibraryContext>();
-        
+    { 
+        var optionsBuilder = new DbContextOptionsBuilder<LibraryContext>();
+        context = new LibraryContext(optionsBuilder.Options); 
     }
-    public void AddUser(Users user)
-    {
-        using (LibraryContext context = new LibraryContext())
-        {
-            context.Users.Add(user);
-            context.SaveChanges();
-        }
-    }
-
     
-    public List<Users> GetUsers()
+    public void AddUser(User user)
     {
-        using (LibraryContext context = new LibraryContext())
-        {
-            context.Users.Find();
-        }
+        context.Users.Add(user);
+        context.SaveChanges();
     }
+    public List<User> GetUsers()
+    {
+       return context.Users.ToList();
+    }
+    
     
 }

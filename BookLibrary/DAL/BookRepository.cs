@@ -6,46 +6,60 @@ namespace BookLibrary.DAL;
 
 public class BookRepository
 {
+    private LibraryContext context;
+
     public BookRepository()
     {
-       var OptionsBuilder = new DbContextOptions<LibraryContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<LibraryContext>();
+        context = new LibraryContext(optionsBuilder.Options); 
     }
     
     public List<Book> GetBooks()
     {
-        List<Book> books = new List<Book>();
-        using (LibraryContext context = new LibraryContext())
-        {
-            books = context.Books.ToList();
-        }
-        return books;
+        return context.Books.ToList();
     }
 
     public void AddBook(Book book)
     {
-        using (LibraryContext context = new LibraryContext())
-        {
-            context.Books.Add(book);
-            context.SaveChanges();
-        }
+        context.Books.Add(book);
+        context.SaveChanges();
     }
 
     public void UpdateBook(Book book)
     {
-        using (LibraryContext context = new LibraryContext())
-        {
-            context.Books.Update(book);
-            context.SaveChanges();
-        }
+        context.Books.Update(book);
+        context.SaveChanges();
+        
     }
 
     public void DeleteBook(Book book)
     {
-        using (LibraryContext context = new LibraryContext())
-        {
-            context.Books.Remove(book);
-            context.SaveChanges();
-        }
+        context.Books.Remove(book);
+        context.SaveChanges();
+    }
+    public Book GetBookByTitle(string title)
+    {
+        return context.Books.SingleOrDefault(b => b.title.Equals(title, StringComparison.OrdinalIgnoreCase));
+    }
+    public List<Book> GetBooksLoanedByUser(Guid userId)
+    {
+        return context.Books.Where(b => b.UserID == userId).ToList();
+    }
+    
+    public void LoanBook(Guid userId, double bookIsbn)
+    {
+        var book = context.Books.SingleOrDefault(b => b.ISBN == bookIsbn);
+        book.inStock = book.inStock;
+        book.UserID = userId;
+        context.SaveChanges(); 
+    }
+
+    public void ReturnBook(double bookIsbn)
+    {
+        var book = context.Books.SingleOrDefault(b => b.ISBN == bookIsbn);
+        book.inStock = "Book is available";
+        book.UserID = null;
+        context.SaveChanges();
     }
     
     

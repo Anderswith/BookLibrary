@@ -9,25 +9,20 @@ namespace BookLibrary;
 
 class Program
 {
+    private static UserRepository userRepo = new UserRepository();
+    private static BookRepository bookRepo = new BookRepository();
+    private static Guid? LoggedInUserId;
+    
     
     static void Main(string[] args)
     {
         
-        /*
-        {
-            
-            Console.WriteLine("enter username");
-            string username = Console.ReadLine();
-            Console.WriteLine("enter password");
-            string password = Console.ReadLine();
-        }*/
         Start();
     }
     
     private static void Start()
     {
         UserAccount();
-        PickOptions();
     }
 
     private static void UserAccount()
@@ -38,7 +33,7 @@ class Program
         switch (choice)
         {
             case 1:
-                PickOptions();
+                LogIn();
                 break;
             case 2:
                 SignUp();
@@ -49,15 +44,14 @@ class Program
 
     private static void LogIn()
     {
-       // Users user = new Users();
-        UserRepository userRepo = new UserRepository();
         Console.WriteLine("Please enter your username");
         string userName = Console.ReadLine();
-        List<Users> userList = userRepo.GetUsers();
-        String toCheck = userList.FirstOrDefault(u => u.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
+        var user = userRepo.GetUsers().FirstOrDefault(u => u.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
 
-        if (userName == toCheck)
+        if (user != null)
         {
+            LoggedInUserId = user.UserID;
+            Console.WriteLine("login was successfull");
             PickOptions();
         }
         else
@@ -66,19 +60,10 @@ class Program
         }
         
     }
-    private static void PickOptions()
-    {
-        
-        
-        Console.WriteLine("Please choose one of the following options:" +
-                          "\n 1. Add book \n 2. Delete book \n 3. Update book " +
-                          "\n 4. Loan book \n 5. Show all books \n 6. show books that have been loaned out");
-        PickChoice();
-    }
 
     private static void SignUp()
     {
-        Users user = new Users();
+        User user = new User();
         UserRepository userRepo = new UserRepository();
         
         Console.Write("Enter username: ");
@@ -86,10 +71,15 @@ class Program
         Console.Write("Enter phonenumber: ");
         user.PhoneNumber = Convert.ToInt32(Console.ReadLine());
         userRepo.AddUser(user);
+        Console.Write($"{user.UserName} signed up successfully");
     }
 
-    private static void PickChoice()
+    private static void PickOptions()
     {
+        Console.WriteLine("Please choose one of the following options:" +
+                          "\n 1. Add book \n 2. Delete book \n 3. Update book " +
+                          "\n 4. Loan book \n 5. Show all books \n 6. Show books that have been loaned out" +
+                          "\n 7. Show books that you have loaned \n 8. Return books" );
         int choice = Convert.ToInt32(Console.ReadLine());
         switch (choice)
         {
@@ -117,6 +107,12 @@ class Program
                 AllLoanedBooks();
                 Start();
                 break;
+            case 7:
+                ShowLoanedBooksByUser();
+                break;
+            case 8:
+                ReturnBook();
+                break;
             default: 
                 Console.WriteLine("Pick a number between 1 and 4");
                 break;
@@ -133,26 +129,38 @@ class Program
         Console.WriteLine("Enter publishing year:");
         book.year = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("Enter the ISBN of the book");
-        book.ISBN = Convert.ToDouble(Console.ReadLine());
+        book.ISBN = Convert.ToInt32(Console.ReadLine());
         book.inStock = "Book is available";
         
-        CreateBook(book);
+       // CreateBook(book);
+       bookRepo.AddBook(book);
     }
 
-    private static void CreateBook(Book book)
+    /*private static void CreateBook(Book book)
     {
         List<Book> books = JsonRead.ReadBooksFromFile();
         books.Add(book);
         JsonWrite.WriteBooksToFile(books);
         Console.WriteLine("Book has been added to the library");
     }
-
+    */
     public static void DeleteBook()
     {
         Console.WriteLine("Enter the title of the book you want to delete:");
         ShowBooks();
         string bookToDelete = Console.ReadLine();
-        try
+        
+        Book book = bookRepo.GetBooks().FirstOrDefault(b=> b.title.Equals(bookToDelete, StringComparison.OrdinalIgnoreCase));
+        if (book != null)
+        {
+            bookRepo.DeleteBook(book);
+            Console.WriteLine($"{bookToDelete}was deleted successfully");
+        }
+        else
+        {
+            Console.WriteLine("Book not found");
+        }
+        /*try
         {
             List<Book> books = JsonRead.ReadBooksFromFile();
             Book bookToRemove = books.FirstOrDefault(b => b.title.Equals(bookToDelete, StringComparison.OrdinalIgnoreCase));
@@ -172,12 +180,13 @@ class Program
         {
             Console.WriteLine($"Error deleting the book: {ex.Message}");
         }
-
+        */
     }
 
     public static void ShowBooks()
     {
-        List<Book> books = JsonRead.ReadBooksFromFile();
+        //List<Book> books = JsonRead.ReadBooksFromFile();
+        List<Book> books = bookRepo.GetBooks();
         foreach (var book in books)
         {
             Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.year}, ISBN: {book.ISBN}, In Stock: {book.inStock}");
@@ -191,9 +200,10 @@ class Program
         Console.WriteLine("Enter the title of the book you want to update:");
         string book = Console.ReadLine();
         List<Book> books = JsonRead.ReadBooksFromFile();
-        Book toEdit = books.FirstOrDefault(b => b.title.Equals(book, StringComparison.OrdinalIgnoreCase));
+        //Book toEdit = books.FirstOrDefault(b => b.title.Equals(book, StringComparison.OrdinalIgnoreCase));
+        Book toUpdate = bookRepo.GetBooks().FirstOrDefault(b => b.title.Equals(book, StringComparison.OrdinalIgnoreCase));
         
-        if(toEdit != null)
+        if(toUpdate != null)
         {
             Console.WriteLine("Choose one of the following options to edit: title, author, year, or ISBN:");
             string pickedBookToEdit = Console.ReadLine();
@@ -202,27 +212,28 @@ class Program
             if (pickedBookToEdit.Contains("title", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Enter new title for the book:");
-                toEdit.title = Console.ReadLine();
+                toUpdate.title = Console.ReadLine();
             }
 
             if (pickedBookToEdit.Contains("author", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Enter new author for the book:");
-                toEdit.author = Console.ReadLine();
+                toUpdate.author = Console.ReadLine();
             }
 
             if (pickedBookToEdit.Contains("year", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Enter new publishing year for the book:");
-                toEdit.year = Convert.ToInt32(Console.ReadLine());
+                toUpdate.year = Convert.ToInt32(Console.ReadLine());
             }
 
             if (pickedBookToEdit.Contains("isbn", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Enter new ISBN for the book:");
-                toEdit.ISBN = Convert.ToDouble(Console.ReadLine());
+                toUpdate.ISBN = Convert.ToInt32(Console.ReadLine());
             }
-            JsonWrite.WriteBooksToFile(books);
+            //JsonWrite.WriteBooksToFile(books);
+            bookRepo.UpdateBook(toUpdate);
             Console.WriteLine("Book has been updated");
         }
         else
@@ -232,24 +243,18 @@ class Program
     }
     public static void LoanBook()
     {
-        Console.WriteLine("Enter the name of the book you want to loan:");
         ShowBooks();
-        List<Book> books = JsonRead.ReadBooksFromFile();
+        Console.WriteLine("Enter the name of the book you want to loan:");
+        //List<Book> books = JsonRead.ReadBooksFromFile();
         string toLoan = Console.ReadLine().ToLower();
-        Book loanBook = books.FirstOrDefault(b => b.title.Equals(toLoan, StringComparison.OrdinalIgnoreCase));
-        
-        if (loanBook != null)
+        //Book loanBook = books.FirstOrDefault(b => b.title.Equals(toLoan, StringComparison.OrdinalIgnoreCase));
+        //Book loanBook = bookRepo.GetBooks().FirstOrDefault(b => b.title.Equals(toLoan, StringComparison.OrdinalIgnoreCase));
+        var book = bookRepo.GetBookByTitle(toLoan);
+        if (book != null)
         {
-            if (loanBook.inStock == "Book is available")  
-            {
-                loanBook.inStock = "Book has been loaned out";  
-                JsonWrite.WriteBooksToFile(books);  
-                Console.WriteLine($"'{loanBook.title}' has been loaned out.");
-            }
-            else if (loanBook.inStock == "Book has been loaned out")  
-            {
-                Console.WriteLine("Book is already loaned out.");
-            }
+            bookRepo.LoanBook(LoggedInUserId.Value, book.ISBN);
+            Console.WriteLine($"{book.ISBN} was loaned successfully");
+            //JsonWrite.WriteBooksToFile(books); 
         }
         else
         {
@@ -260,16 +265,54 @@ class Program
 
     public static void AllLoanedBooks()
     {
-        string loanedOut = "Book has been loaned out";
-        List<Book> books = JsonRead.ReadBooksFromFile();
-        Book loanedOutBooks = books.FirstOrDefault(b=>b.inStock.Equals(loanedOut, StringComparison.OrdinalIgnoreCase));
-        List<Book> booksToLoan = new List<Book>();
+        //string loanedOut = "Book has been loaned out";
+        //List<Book> books = JsonRead.ReadBooksFromFile();
+        //Book loanedOutBooks = books.FirstOrDefault(b=>b.inStock.Equals(loanedOut, StringComparison.OrdinalIgnoreCase));
+        List<Book> loanedOut = bookRepo.GetBooks().Where(b => b.inStock == "Book is available").ToList();
+        /*List<Book> booksToLoan = new List<Book>();
         if (loanedOutBooks != null)
         {
             booksToLoan.Add(loanedOutBooks);
         }
         Console.WriteLine(booksToLoan);
+        */
+        foreach (var book in loanedOut)
+        {
+            Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.year}, ISBN: {book.ISBN}");
+        }
     }
-   
+
+    public static void ShowLoanedBooksByUser()
+    {
+        List<Book> loanedBooks = bookRepo.GetBooksLoanedByUser(LoggedInUserId.Value);
+        Console.WriteLine("books loaned by you");
+        if (loanedBooks != null)
+        {
+            foreach (var book in loanedBooks)
+            {
+                Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.year}, ISBN: {book.ISBN}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("You have not loaned any books yet");
+        }
+    }
+
+    public static void ReturnBook()
+    {
+        List<Book> loanedBooks = bookRepo.GetBooksLoanedByUser(LoggedInUserId.Value);
+        ShowLoanedBooksByUser();
+        Console.WriteLine("Enter the title of the book you want to return:");
+        
+        string toReturn = Console.ReadLine();
+        var bookToReturn = loanedBooks.FirstOrDefault(b => b.title.Equals(toReturn, StringComparison.OrdinalIgnoreCase));
+        if (bookToReturn != null)
+        {
+            Console.WriteLine("Book not found");
+        }
+        bookRepo.ReturnBook(bookToReturn.ISBN);
+        Console.WriteLine($"{bookToReturn} has been returned");
+    }
 
 }
