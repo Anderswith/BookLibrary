@@ -1,6 +1,8 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using BookLibrary.BE;
+using BookLibrary.DAL;
 using BookLibrary.Util;
 
 namespace BookLibrary;
@@ -10,17 +12,81 @@ class Program
     
     static void Main(string[] args)
     {
-        Start();
         
+        /*
+        {
+            
+            Console.WriteLine("enter username");
+            string username = Console.ReadLine();
+            Console.WriteLine("enter password");
+            string password = Console.ReadLine();
+        }*/
+        Start();
     }
-
+    
     private static void Start()
     {
-        Console.WriteLine("Hello, welcome to the Book Library! Please choose one of the following options:" +
-                          "\n 1. Add book \n 2. Delete book \n 3. Update book \n 4. Loan book");
+        UserAccount();
+        PickOptions();
+    }
+
+    private static void UserAccount()
+    {
+        Console.WriteLine("Welcome to the Book Library! \n Please choose one of the following options:" +
+                          " \n 1. Log in \n Sign up");
+        int choice = Convert.ToInt32(Console.ReadLine());
+        switch (choice)
+        {
+            case 1:
+                PickOptions();
+                break;
+            case 2:
+                SignUp();
+                break;
+                
+        }
+    }
+
+    private static void LogIn()
+    {
+       // Users user = new Users();
+        UserRepository userRepo = new UserRepository();
+        Console.WriteLine("Please enter your username");
+        string userName = Console.ReadLine();
+        List<Users> userList = userRepo.GetUsers();
+        String toCheck = userList.FirstOrDefault(u => u.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
+
+        if (userName == toCheck)
+        {
+            PickOptions();
+        }
+        else
+        {
+            Console.WriteLine("Please enter a correct username");
+        }
+        
+    }
+    private static void PickOptions()
+    {
+        
+        
+        Console.WriteLine("Please choose one of the following options:" +
+                          "\n 1. Add book \n 2. Delete book \n 3. Update book " +
+                          "\n 4. Loan book \n 5. Show all books \n 6. show books that have been loaned out");
         PickChoice();
     }
 
+    private static void SignUp()
+    {
+        Users user = new Users();
+        UserRepository userRepo = new UserRepository();
+        
+        Console.Write("Enter username: ");
+        user.UserName = Console.ReadLine();
+        Console.Write("Enter phonenumber: ");
+        user.PhoneNumber = Convert.ToInt32(Console.ReadLine());
+        userRepo.AddUser(user);
+    }
 
     private static void PickChoice()
     {
@@ -41,6 +107,14 @@ class Program
                 break;
             case 4:
                 LoanBook();
+                Start();
+                break;
+            case 5: 
+                ShowBooks();
+                Start();
+                break;
+            case 6:
+                AllLoanedBooks();
                 Start();
                 break;
             default: 
@@ -133,8 +207,8 @@ class Program
 
             if (pickedBookToEdit.Contains("author", StringComparison.OrdinalIgnoreCase))
             {
-             Console.WriteLine("Enter new author for the book:");
-             toEdit.author = Console.ReadLine();
+                Console.WriteLine("Enter new author for the book:");
+                toEdit.author = Console.ReadLine();
             }
 
             if (pickedBookToEdit.Contains("year", StringComparison.OrdinalIgnoreCase))
@@ -182,6 +256,19 @@ class Program
             Console.WriteLine($"No book found with the title '{toLoan}'.");
         }
 
+    }
+
+    public static void AllLoanedBooks()
+    {
+        string loanedOut = "Book has been loaned out";
+        List<Book> books = JsonRead.ReadBooksFromFile();
+        Book loanedOutBooks = books.FirstOrDefault(b=>b.inStock.Equals(loanedOut, StringComparison.OrdinalIgnoreCase));
+        List<Book> booksToLoan = new List<Book>();
+        if (loanedOutBooks != null)
+        {
+            booksToLoan.Add(loanedOutBooks);
+        }
+        Console.WriteLine(booksToLoan);
     }
    
 
