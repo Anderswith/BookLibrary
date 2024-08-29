@@ -11,7 +11,7 @@ public class LibraryContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=EASV-DB4;Database=AndersW_Library;User Id=CSe2023t_t_5;Password=CSe2023tT5#23");
+        optionsBuilder.UseSqlServer("Server=EASV-DB4;Database=AndersW_Library;User Id=CSe2023t_t_5;Password=CSe2023tT5#23;trustServerCertificate=true");
     }
     
 }

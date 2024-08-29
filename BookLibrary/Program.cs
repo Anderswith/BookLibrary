@@ -16,19 +16,13 @@ class Program
     
     static void Main(string[] args)
     {
-        
-        Start();
-    }
-    
-    private static void Start()
-    {
         UserAccount();
     }
 
     private static void UserAccount()
     {
         Console.WriteLine("Welcome to the Book Library! \n Please choose one of the following options:" +
-                          " \n 1. Log in \n Sign up");
+                          " \n 1. Log in \n 2. Sign up");
         int choice = Convert.ToInt32(Console.ReadLine());
         switch (choice)
         {
@@ -72,6 +66,8 @@ class Program
         user.PhoneNumber = Convert.ToInt32(Console.ReadLine());
         userRepo.AddUser(user);
         Console.Write($"{user.UserName} signed up successfully");
+        
+        UserAccount();
     }
 
     private static void PickOptions()
@@ -85,27 +81,27 @@ class Program
         {
             case 1:
                 AddBook();
-                Start();
+                PickOptions();
                 break;
             case 2:
                 DeleteBook();
-                Start();
+                PickOptions();
                 break;
             case 3:
                 UpdateBook();
-                Start();
+                PickOptions();
                 break;
             case 4:
                 LoanBook();
-                Start();
+                PickOptions();
                 break;
             case 5: 
                 ShowBooks();
-                Start();
+                PickOptions();
                 break;
             case 6:
                 AllLoanedBooks();
-                Start();
+                PickOptions();
                 break;
             case 7:
                 ShowLoanedBooksByUser();
@@ -127,10 +123,11 @@ class Program
         Console.WriteLine("Enter book author:");
         book.author = Console.ReadLine();
         Console.WriteLine("Enter publishing year:");
-        book.year = Convert.ToInt32(Console.ReadLine());
+        book.yearOfPublication = Convert.ToInt32(Console.ReadLine());
         Console.WriteLine("Enter the ISBN of the book");
-        book.ISBN = Convert.ToInt32(Console.ReadLine());
+        book.ISBN = Console.ReadLine();
         book.inStock = "Book is available";
+        book.UserID = null;
         
        // CreateBook(book);
        bookRepo.AddBook(book);
@@ -189,7 +186,7 @@ class Program
         List<Book> books = bookRepo.GetBooks();
         foreach (var book in books)
         {
-            Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.year}, ISBN: {book.ISBN}, In Stock: {book.inStock}");
+            Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.yearOfPublication}, ISBN: {book.ISBN}, In Stock: {book.inStock}");
         }
     }
 
@@ -199,7 +196,7 @@ class Program
         ShowBooks();
         Console.WriteLine("Enter the title of the book you want to update:");
         string book = Console.ReadLine();
-        List<Book> books = JsonRead.ReadBooksFromFile();
+        //List<Book> books = JsonRead.ReadBooksFromFile();
         //Book toEdit = books.FirstOrDefault(b => b.title.Equals(book, StringComparison.OrdinalIgnoreCase));
         Book toUpdate = bookRepo.GetBooks().FirstOrDefault(b => b.title.Equals(book, StringComparison.OrdinalIgnoreCase));
         
@@ -224,14 +221,9 @@ class Program
             if (pickedBookToEdit.Contains("year", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Enter new publishing year for the book:");
-                toUpdate.year = Convert.ToInt32(Console.ReadLine());
+                toUpdate.yearOfPublication = Convert.ToInt32(Console.ReadLine());
             }
-
-            if (pickedBookToEdit.Contains("isbn", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("Enter new ISBN for the book:");
-                toUpdate.ISBN = Convert.ToInt32(Console.ReadLine());
-            }
+            
             //JsonWrite.WriteBooksToFile(books);
             bookRepo.UpdateBook(toUpdate);
             Console.WriteLine("Book has been updated");
@@ -252,7 +244,10 @@ class Program
         var book = bookRepo.GetBookByTitle(toLoan);
         if (book != null)
         {
-            bookRepo.LoanBook(LoggedInUserId.Value, book.ISBN);
+            //bookRepo.LoanBook();
+            book.UserID = LoggedInUserId;
+            book.inStock = "Book unavailable";
+            bookRepo.UpdateBook(book);
             Console.WriteLine($"{book.ISBN} was loaned successfully");
             //JsonWrite.WriteBooksToFile(books); 
         }
@@ -278,7 +273,7 @@ class Program
         */
         foreach (var book in loanedOut)
         {
-            Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.year}, ISBN: {book.ISBN}");
+            Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.yearOfPublication}, ISBN: {book.ISBN}");
         }
     }
 
@@ -290,7 +285,7 @@ class Program
         {
             foreach (var book in loanedBooks)
             {
-                Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.year}, ISBN: {book.ISBN}");
+                Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.yearOfPublication}, ISBN: {book.ISBN}");
             }
         }
         else

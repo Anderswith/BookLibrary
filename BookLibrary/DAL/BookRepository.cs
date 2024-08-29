@@ -39,22 +39,14 @@ public class BookRepository
     }
     public Book GetBookByTitle(string title)
     {
-        return context.Books.SingleOrDefault(b => b.title.Equals(title, StringComparison.OrdinalIgnoreCase));
+        return context.Books.SingleOrDefault(b => b.title.Equals(title));
     }
     public List<Book> GetBooksLoanedByUser(Guid userId)
     {
         return context.Books.Where(b => b.UserID == userId).ToList();
     }
     
-    public void LoanBook(Guid userId, double bookIsbn)
-    {
-        var book = context.Books.SingleOrDefault(b => b.ISBN == bookIsbn);
-        book.inStock = book.inStock;
-        book.UserID = userId;
-        context.SaveChanges(); 
-    }
-
-    public void ReturnBook(double bookIsbn)
+    public void ReturnBook(string bookIsbn)
     {
         var book = context.Books.SingleOrDefault(b => b.ISBN == bookIsbn);
         book.inStock = "Book is available";
