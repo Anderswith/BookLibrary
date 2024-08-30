@@ -58,15 +58,22 @@ class Program
     private static void SignUp()
     {
         User user = new User();
-        UserRepository userRepo = new UserRepository();
-        
         Console.Write("Enter username: ");
-        user.UserName = Console.ReadLine();
-        Console.Write("Enter phonenumber: ");
-        user.PhoneNumber = Convert.ToInt32(Console.ReadLine());
-        userRepo.AddUser(user);
-        Console.Write($"{user.UserName} signed up successfully");
-        
+        string toTest = Console.ReadLine();
+        bool alreadyExists = userRepo.GetUsers().Any(u => u.UserName.Equals(toTest, StringComparison.OrdinalIgnoreCase));
+            if (!alreadyExists)
+            {
+                
+                user.UserName = toTest;
+                Console.Write("Enter phonenumber: ");
+                user.PhoneNumber = Convert.ToInt32(Console.ReadLine());
+                userRepo.AddUser(user);
+                Console.Write($"{user.UserName} signed up successfully");
+            }
+            else
+            {
+                Console.WriteLine("That username is already taken");
+            }
         UserAccount();
     }
 
@@ -75,7 +82,7 @@ class Program
         Console.WriteLine("Please choose one of the following options:" +
                           "\n 1. Add book \n 2. Delete book \n 3. Update book " +
                           "\n 4. Loan book \n 5. Show all books \n 6. Show books that have been loaned out" +
-                          "\n 7. Show books that you have loaned \n 8. Return books" );
+                          "\n 7. Show books that you have loaned \n 8. Return books \n 9. Show all users" );
         int choice = Convert.ToInt32(Console.ReadLine());
         switch (choice)
         {
@@ -105,9 +112,15 @@ class Program
                 break;
             case 7:
                 ShowLoanedBooksByUser();
+                PickOptions();
                 break;
             case 8:
                 ReturnBook();
+                PickOptions();
+                break;
+            case 9:
+                ShowAllUsers();
+                PickOptions();
                 break;
             default: 
                 Console.WriteLine("Pick a number between 1 and 4");
@@ -190,6 +203,15 @@ class Program
         }
     }
 
+    public static void ShowAllUsers()
+    {
+        List<User> users = userRepo.GetUsers();
+        foreach (var user in users)
+        {
+            Console.WriteLine($"Username:{user.UserName} Phone number:{user.PhoneNumber}");
+        }
+    }
+
     public static void UpdateBook()
     {
         Console.WriteLine("Here is a list of all the books in the library:");
@@ -227,7 +249,6 @@ class Program
             //JsonWrite.WriteBooksToFile(books);
             bookRepo.UpdateBook(toUpdate);
             Console.WriteLine("Book has been updated");
-            PickOptions();
         }
         else
         {
@@ -251,12 +272,10 @@ class Program
             bookRepo.UpdateBook(book);
             Console.WriteLine($"{book.ISBN} was loaned successfully");
             //JsonWrite.WriteBooksToFile(books); 
-            PickOptions();
         }
         else
         {
             Console.WriteLine($"No book found with the title '{toLoan}'.");
-            PickOptions();
         }
 
     }
@@ -278,7 +297,6 @@ class Program
         {
             Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.yearOfPublication}, ISBN: {book.ISBN}");
         }
-        PickOptions();
     }
 
     public static void ShowLoanedBooksByUser()
@@ -310,12 +328,10 @@ class Program
         {
             Console.WriteLine($"{bookToReturn} has been returned");
             bookRepo.ReturnBook(bookToReturn.ISBN);
-            PickOptions();
         }
         else
         {
             Console.WriteLine("Book not found");
-            PickOptions();
         }
     }
 }
