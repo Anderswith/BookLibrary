@@ -227,6 +227,7 @@ class Program
             //JsonWrite.WriteBooksToFile(books);
             bookRepo.UpdateBook(toUpdate);
             Console.WriteLine("Book has been updated");
+            PickOptions();
         }
         else
         {
@@ -250,10 +251,12 @@ class Program
             bookRepo.UpdateBook(book);
             Console.WriteLine($"{book.ISBN} was loaned successfully");
             //JsonWrite.WriteBooksToFile(books); 
+            PickOptions();
         }
         else
         {
             Console.WriteLine($"No book found with the title '{toLoan}'.");
+            PickOptions();
         }
 
     }
@@ -275,6 +278,7 @@ class Program
         {
             Console.WriteLine($"Title: {book.title}, Author: {book.author}, Year: {book.yearOfPublication}, ISBN: {book.ISBN}");
         }
+        PickOptions();
     }
 
     public static void ShowLoanedBooksByUser()
@@ -304,10 +308,14 @@ class Program
         var bookToReturn = loanedBooks.FirstOrDefault(b => b.title.Equals(toReturn, StringComparison.OrdinalIgnoreCase));
         if (bookToReturn != null)
         {
-            Console.WriteLine("Book not found");
+            Console.WriteLine($"{bookToReturn} has been returned");
+            bookRepo.ReturnBook(bookToReturn.ISBN);
+            PickOptions();
         }
-        bookRepo.ReturnBook(bookToReturn.ISBN);
-        Console.WriteLine($"{bookToReturn} has been returned");
+        else
+        {
+            Console.WriteLine("Book not found");
+            PickOptions();
+        }
     }
-
 }
