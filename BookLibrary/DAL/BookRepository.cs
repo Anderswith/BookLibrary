@@ -29,7 +29,6 @@ public class BookRepository
     {
         context.Books.Update(book);
         context.SaveChanges();
-        
     }
 
     public void DeleteBook(Book book)
